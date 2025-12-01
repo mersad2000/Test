@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>دبه دوغ ها روی قلب حرکت کنند</title>
+    <style>
+        body {
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .heart-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .text-item {
+            position: absolute;
+            color: #ff69b4; /* صورتی */
+            font-size: 14px;
+            white-space: nowrap;
+            text-shadow: 0 0 5px #ff69b4, 0 0 10px #ff69b4;
+            transform-origin: center;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="heart-container" id="heartContainer"></div>
+
+    <script>
+        const container = document.getElementById('heartContainer');
+        const text = "دبه دوغ";
+        const count = 40; // تعداد متن‌ها — هرچی بیشتر، پرتر میشه
+        const texts = [];
+
+        // تولید متن‌ها
+        for (let i = 0; i < count; i++) {
+            const element = document.createElement('div');
+            element.className = 'text-item';
+            element.textContent = text;
+            container.appendChild(element);
+            texts.push(element);
+        }
+
+        // فرمول قلب (Cardioid) - مختصات x,y بر اساس زاویه
+        function heartPoint(t) {
+            const x = 16 * Math.sin(t) ** 3;
+            const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+            return { x, y };
+        }
+
+        // اندازه‌گیری و مرکزدهی
+        const scale = 8; // مقیاس برای بزرگی قلب
+        const centerX = 150;
+        const centerY = 150;
+
+        let timeOffset = 0;
+
+        function animate() {
+            timeOffset += 0.01; // سرعت حرکت
+
+            texts.forEach((el, i) => {
+                const angle = (i / count) * Math.PI * 2 + timeOffset;
+                const point = heartPoint(angle);
+
+                // موقعیت متن
+                const x = centerX + point.x * scale;
+                const y = centerY - point.y * scale; // منفی برای معکوس کردن محور Y
+
+                el.style.transform = `translate(${x}px, ${y}px)`;
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
